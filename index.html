@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Instructions Tool</title>
+    <style>
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+textarea, input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #333;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+textarea:focus, input:focus {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #1f8ef1;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #1a73e8;
+}
+
+h2 {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+pre {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    color: #fff;
+    text-align: left;
+    font-size: 14px;
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 20px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Testing Instructions Tool</h1>
+    
+        <label for="context">Context (Optional):</label>
+        <textarea id="context" rows="4" placeholder="Provide additional context..."></textarea>
+    
+        <label for="screenshots">Upload Screenshots:</label>
+        <input type="file" id="screenshots" accept="image/*" multiple>
+    
+        <button type="button" onclick="describeTestingInstructions()">Describe Testing Instructions</button>
+    
+        <h2>Testing Instructions:</h2>
+        <pre id="output"></pre>
+    </div>
+    
+
+<script>
+    function describeTestingInstructions() {
+        const context = document.getElementById('context').value;
+        const screenshots = document.getElementById('screenshots').files;
+
+        if (screenshots.length === 0) {
+            alert('Please upload at least one screenshot.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('context', context);
+        for (let i = 0; i < screenshots.length; i++) {
+            formData.append('screenshots', screenshots[i]);
+        }
+
+        fetch('http://localhost:5000/api/testing-instructions', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);      })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>
